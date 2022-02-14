@@ -1,6 +1,7 @@
 /android
 /web
-
+/.vscode
+/utils/constants.dart
 
 # Miscellaneous
 *.class
