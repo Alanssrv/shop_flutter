@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop/utils/constants.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -11,8 +11,7 @@ class Product with ChangeNotifier {
   final String imageUrl;
   bool isFavorite;
 
-  var product_base_url = const String.fromEnvironment('PRODUCT_BASE_URL');
-  // var product_base_url = 'url/products';
+  var user_favorite_url = Constants.USER_FAVORITES_URL;
 
   Product({
     required this.id,
@@ -28,12 +27,12 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String token, String userId) async {
     _toggleFavorite();
 
-    final response = await http.patch(
-      Uri.parse('$product_base_url/$id.json'),
-      body: jsonEncode({'isFavorite': isFavorite}),
+    final response = await http.put(
+      Uri.parse('$user_favorite_url/$userId/$id.json?auth=$token'),
+      body: jsonEncode(isFavorite),
     );
 
     if (response.statusCode >= 400) {

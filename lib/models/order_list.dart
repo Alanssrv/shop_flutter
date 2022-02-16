@@ -4,24 +4,34 @@ import 'package:http/http.dart' as http;
 import 'package:shop/models/cart.dart';
 import 'package:shop/models/cart_item.dart';
 import 'package:shop/models/order.dart';
+import 'package:shop/utils/constants.dart';
 
 class OrderList with ChangeNotifier {
+  final String _token;
+  final String _userId;
   List<Order> _items = [];
 
   List<Order> get items => [..._items];
 
   int get itemsCount => _items.length;
 
-  var order_base_url = const String.fromEnvironment('ORDER_BASE_URL');
-  // var order_base_url = 'url/orders';
+  var order_base_url = Constants.ORDER_BASE_URL;
+
+  OrderList([
+    this._token = '',
+    this._userId = '',
+    this._items = const [],
+  ]);
 
   Future<void> loadOrders() async {
-    _items.clear();
-    final response = await http.get(Uri.parse('$order_base_url.json'));
+    List<Order> items = [];
+    items.clear();
+    final response =
+        await http.get(Uri.parse('$order_base_url/$_userId.json?auth=$_token'));
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);
     data.forEach((orderId, orderData) {
-      _items.add(Order(
+      items.add(Order(
         id: orderId,
         total: orderData['total'],
         date: DateTime.parse(orderData['date']),
@@ -36,13 +46,14 @@ class OrderList with ChangeNotifier {
         }).toList(),
       ));
     });
+    _items = items.reversed.toList();
     notifyListeners();
   }
 
   Future<void> addOrder(Cart cart) async {
     final date = DateTime.now();
     final response = await http.post(
-      Uri.parse('$order_base_url.json'),
+      Uri.parse('$order_base_url/$_userId.json?auth=$_token'),
       body: jsonEncode({
         'total': cart.totalAmount,
         'date': date.toIso8601String(),
