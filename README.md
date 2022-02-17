@@ -5,6 +5,7 @@
     * Formulários
     * Requisições e banco de dados remoto
     * Autenticação
+    * Animações/Transições
 
 * Esse projeto segue um projeto apresentado pelo [Leonardo Moura Leitão](https://www.udemy.com/user/leonardomouraleitao/), no curso [Aprenda Flutter e Desenvolva Apps Para Android e IOS 2021](https://www.udemy.com/course/curso-flutter/)
 
